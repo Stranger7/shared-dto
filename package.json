@@ -1,0 +1,13 @@
+{
+  "name": "shared-dto",
+  "description": "Shared DTO models compiler",
+  "private": true,
+  "exports": {
+    "./*": "./dist/ts/*.ts"
+  },
+  "homepage": "https://github.com/educorg/shared-dto#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/educorg/shared-dto.git"
+  }
+}
