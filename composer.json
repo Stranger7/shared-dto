@@ -1,6 +1,6 @@
 {
-  "name": "shared-dto",
-  "version": "1.0.3",
+  "name": "stranger7/shared-dto",
+  "version": "1.0.0",
   "description": "Shared DTO models compiler",
   "license": "MIT",
   "minimum-stability": "dev",
@@ -10,7 +10,7 @@
     "ext-mbstring": "*",
     "yiithings/yii2-dotenv": "*",
     "symfony/yaml": "6.0.x-dev",
-    "yiisoft/validator": "^3.0@dev"
+    "yiisoft/validator": "dev-master"
   },
   "autoload": {
     "psr-4": {
