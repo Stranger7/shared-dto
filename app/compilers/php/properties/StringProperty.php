@@ -40,7 +40,7 @@ class StringProperty extends AbstractProperty
 
     protected function renderRuleDateTime(): string
     {
-        $this->imports[] = 'use Yiisoft\Validator\Rule\DateTime;';
+        $this->imports[] = 'use Yiisoft\Validator\Rule\Date\DateTime;';
         $format = $this->property->format ?? 'Y-m-d\TH:i:s.uP';
 
         return self::INDENT . "#[DateTime(format: '$format')]" . PHP_EOL;

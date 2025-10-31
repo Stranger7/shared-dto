@@ -1,0 +1,34 @@
+parent: dto
+properties:
+  - name: firstName
+    type: string
+    comment: Имя пользователя
+  - name: lastName
+    type: string
+    comment: Фамилия пользователя
+  - name: email
+    type: string
+    typeOf: email
+    comment: E-mail пользователя
+  - name: birthDate
+    type: string
+    typeOf: datetime
+    format: dd.mm.yyyy
+    comment: Дата рождения
+  - name: roles
+    type: array
+    typeOf: example\role
+    default: [1]
+    comment: Роли
+  - name: isActive
+    type: bool
+    default: true
+    comment: Активен
+  - name: balance
+    type: double
+    comment: Баланс
+    default: 0.00
+  - name: bio
+    type: json
+    default: []
+    comment: Биометрические данные

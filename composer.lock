@@ -1162,12 +1162,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/strings.git",
-                "reference": "c8770364932bab9cea4f25f6a77f75eb37991eec"
+                "reference": "34bba9e4ee60940a4e2f8bcabc64d6fd9ea8d900"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/strings/zipball/c8770364932bab9cea4f25f6a77f75eb37991eec",
-                "reference": "c8770364932bab9cea4f25f6a77f75eb37991eec",
+                "url": "https://api.github.com/repos/yiisoft/strings/zipball/34bba9e4ee60940a4e2f8bcabc64d6fd9ea8d900",
+                "reference": "34bba9e4ee60940a4e2f8bcabc64d6fd9ea8d900",
                 "shasum": ""
             },
             "require": {
@@ -1219,7 +1219,7 @@
                     "type": "opencollective"
                 }
             ],
-            "time": "2025-10-05T16:35:23+00:00"
+            "time": "2025-10-07T14:19:00+00:00"
         },
         {
             "name": "yiisoft/translator",
@@ -1645,12 +1645,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "8b4113984ee82d4b6b53438810673e49374ce84a"
+                "reference": "b69530590353826818e34b096813888516300858"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/8b4113984ee82d4b6b53438810673e49374ce84a",
-                "reference": "8b4113984ee82d4b6b53438810673e49374ce84a",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/b69530590353826818e34b096813888516300858",
+                "reference": "b69530590353826818e34b096813888516300858",
                 "shasum": ""
             },
             "require": {
@@ -1663,7 +1663,7 @@
                 "phpbench/phpbench": "^1.2",
                 "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpunit": "^10.5"
+                "phpunit/phpunit": "^10.5.58"
             },
             "default-branch": true,
             "type": "library",
@@ -1707,7 +1707,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-10-07T07:43:42+00:00"
+            "time": "2025-10-13T19:38:44+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2273,12 +2273,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b335be375e08c7466013dd30172d6666355f09fa"
+                "reference": "50d63fb7b5450ca62c4e93538ec5cb998a450bd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b335be375e08c7466013dd30172d6666355f09fa",
-                "reference": "b335be375e08c7466013dd30172d6666355f09fa",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/50d63fb7b5450ca62c4e93538ec5cb998a450bd0",
+                "reference": "50d63fb7b5450ca62c4e93538ec5cb998a450bd0",
                 "shasum": ""
             },
             "require": {
@@ -2376,7 +2376,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-10-03T04:33:04+00:00"
+            "time": "2025-10-11T09:54:19+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -3454,6 +3454,6 @@
         "ext-yaml": "*",
         "ext-mbstring": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

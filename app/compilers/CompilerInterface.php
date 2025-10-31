@@ -2,9 +2,9 @@
 
 namespace DTOCompiler\compilers;
 
+use DTOCompiler\models\DTOData;
+
 interface CompilerInterface
 {
-    public function render(): self;
-
-    public function save();
+    public function run(DTOData $data): void;
 }

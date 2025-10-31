@@ -2,7 +2,7 @@
 
 namespace DTOCompiler\compilers\ts\properties;
 
-use DTOCompiler\compilers\ts\ImportService;
+use DTOCompiler\compilers\ts\ImportStringMaker;
 use Exception;
 
 class ArrayProperty extends AbstractProperty
@@ -22,6 +22,6 @@ class ArrayProperty extends AbstractProperty
             return $this->property->typeOf . '[]';
         }
 
-        return ImportService::getInstance()->createType($this->property->typeOf) . '[]';
+        return ImportStringMaker::getInstance()->make($this->property->typeOf) . '[]';
     }
 }

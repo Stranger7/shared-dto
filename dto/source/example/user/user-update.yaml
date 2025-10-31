@@ -1,0 +1,6 @@
+parent: example\user\user-create
+properties:
+  - name: id
+    type: int
+required:
+  - id

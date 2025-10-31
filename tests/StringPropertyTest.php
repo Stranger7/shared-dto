@@ -3,7 +3,7 @@
 namespace DTOCompiler\tests;
 
 use DTOCompiler\compilers\php\properties\StringProperty;
-use DTOCompiler\models\Descriptor;
+use DTOCompiler\models\PropertyDescriptor;
 use PHPUnit\Framework\TestCase;
 
 class StringPropertyTest extends TestCase
@@ -11,7 +11,7 @@ class StringPropertyTest extends TestCase
     public function testCodeCompile(): void
     {
         $definition = (new StringProperty(
-            new Descriptor([
+            new PropertyDescriptor([
                 'name' => 'role',
                 'type' => 'string',
                 'default' => 'user',

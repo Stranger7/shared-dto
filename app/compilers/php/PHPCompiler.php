@@ -11,50 +11,46 @@ use DTOCompiler\compilers\php\properties\IntProperty;
 use DTOCompiler\compilers\php\properties\JsonProperty;
 use DTOCompiler\compilers\php\properties\ObjectProperty;
 use DTOCompiler\compilers\php\properties\StringProperty;
-use DTOCompiler\helpers\StringHelper;
+use DTOCompiler\models\DTOData;
 use Exception;
+use yii\helpers\Inflector;
 
 class PHPCompiler extends AbstractCompiler
 {
     private array $rendererMap = [
         'string' => StringProperty::class,
+        'int' => IntProperty::class,
         'integer' => IntProperty::class,
+        'bool' => BooleanProperty::class,
         'boolean' => BooleanProperty::class,
         'object' => ObjectProperty::class,
         'array' => ArrayProperty::class,
         'float' => FloatProperty::class,
+        'double' => FloatProperty::class,
         'json' => JsonProperty::class,
     ];
 
     private array $imports = [];
 
-    protected function setDtoFolder(): void
-    {
-        $this->dstFolder = realpath(__DIR__ . '/../../../dto/php');
-    }
-
     /**
      * @throws Exception
      */
-    public function render(): self
+    protected function render(DTOData $data): void
     {
-        $properties = $this->renderProperties();
+        $properties = $this->renderProperties($data);
 
-        $this->code = $this->renderHeader()
+        $this->dtoCode = $this->renderHeader($data)
             . $properties['definitions']
             . ($properties['setters'] ? PHP_EOL . PHP_EOL . $properties['setters'] : '') . PHP_EOL
             . '}' . PHP_EOL;
-
-        return $this;
     }
 
-    protected function renderHeader(): string
+    protected function renderHeader(DTOData $data): string
     {
         $placeholders = [
-            '%namespace%' => env('PHP_DTO_NAMESPACE'),
-            '%classPath%' => StringHelper::asImportString($this->description->folder),
-            '%className%' => StringHelper::camelize($this->description->filename),
-            '%parentClass%' => $this->getParentClass($this->description->parent),
+            '%namespace%' => PHPHelper::makeNamespace($data->path),
+            '%className%' => Inflector::camelize($data->name),
+            '%parentClass%' => PHPHelper::getParentClass($data->description->parent),
         ];
 
         $imports = implode(PHP_EOL, $this->imports);
@@ -63,30 +59,37 @@ class PHPCompiler extends AbstractCompiler
         }
 
         $template = '<?php' . PHP_EOL . PHP_EOL
-            . 'namespace {%classPath%};' . PHP_EOL . PHP_EOL
+            . 'namespace {%namespace%};' . PHP_EOL . PHP_EOL
             . $imports
             . 'class {%className%} extends \{%parentClass%}' . PHP_EOL
             . '{' . PHP_EOL;
 
         return str_replace(
-            array_map(static fn(string $key) => '{' . $key . '}', array_keys($placeholders)),
+            array_map(
+                static fn(string $key) => '{' . $key . '}',
+                array_keys($placeholders)
+            ),
             array_values($placeholders),
-            $template
+            $template,
         );
     }
 
     /**
      * @throws Exception
      */
-    protected function renderProperties(): array
+    private function renderProperties(DTOData $data): array
     {
         $definitions = [];
         $setters = [];
+        $this->imports = [];
 
-        foreach ($this->description->properties ?? [] as $property) {
+        foreach ($description->properties ?? [] as $property) {
             if (isset($this->rendererMap[$property->type])) {
                 /** @var AbstractProperty $renderer */
-                $renderer = new $this->rendererMap[$property->type]($property);
+                $renderer = new $this->rendererMap[$property->type](
+                    $property,
+                    in_array($property->name, $data->description->required)
+                );
                 $definitions[] = $renderer->renderDefinition();
                 $setters[] = rtrim($renderer->renderSetter());
                 $this->imports = array_unique(array_merge($this->imports, $renderer->getImports()));
@@ -101,26 +104,16 @@ class PHPCompiler extends AbstractCompiler
         ];
     }
 
-    private function getParentClass(?string $parent)
+    protected function makeDTOFilename(DTOData $data): string
     {
-        if (!$parent) {
-            return env('PHP_DTO_DEFAULT_PARENT');
-        }
-        return StringHelper::asImportString($parent);
-    }
-
-    protected function getDtoFilename(): string
-    {
-        $folder = implode(
-            '/',
+        $path = implode(
+            DIRECTORY_SEPARATOR,
             array_map(
-                static fn(string $segment) => StringHelper::camelize($segment),
-                explode('/', $this->description->folder)
-            )
+                static fn(string $segment) => Inflector::camelize($segment),
+                array_filter(preg_split('/[\/\\\\]/', $data->path . DIRECTORY_SEPARATOR . $data->name)),
+            ),
         );
 
-        return $this->dstFolder
-            . '/' . $folder
-            . '/' . StringHelper::camelize($this->description->filename) . '.php';
+        return $this->dtoRootFolder . $path . '.php';
     }
 }

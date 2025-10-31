@@ -2,7 +2,7 @@
 
 namespace DTOCompiler\compilers;
 
-use DTOCompiler\models\PropertyRenderData;
+use DTOCompiler\compilers\ts\properties\PropertyRenderData;
 
 interface PropertyInterface
 {

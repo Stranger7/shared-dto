@@ -1,0 +1,11 @@
+parent: dto
+required:
+  - id
+  - title
+properties:
+  - name: id
+    type: integer
+    comment: Идентификатор команды
+  - name: title
+    type: string
+    comment: Наименование команды

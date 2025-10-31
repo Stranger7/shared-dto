@@ -2,7 +2,8 @@
 
 namespace DTOCompiler\compilers\php\properties;
 
-use DTOCompiler\helpers\StringHelper;
+use DTOCompiler\compilers\php\PHPHelper;
+use yii\helpers\Inflector;
 
 class ArrayProperty extends AbstractProperty
 {
@@ -21,7 +22,7 @@ class ArrayProperty extends AbstractProperty
         $parts = [];
         if ($typeOf = $this->property->typeOf) {
             if (is_int(strpos($typeOf, '\\'))) {
-                $typeOf = StringHelper::asFullClassName($typeOf);
+                $typeOf = PHPHelper::makeFullClassName($typeOf);
             }
             $parts[] = $typeOf . '[]';
         }
@@ -50,8 +51,8 @@ class ArrayProperty extends AbstractProperty
                 '{%typeOf%}',
                 '{%name%}'
             ], [
-                StringHelper::camelize($this->property->name),
-                StringHelper::asFullClassName($this->property->typeOf),
+                Inflector::camelize($this->property->name),
+                PHPHelper::makeFullClassName($this->property->typeOf),
                 $this->property->name
             ], $template);
         }

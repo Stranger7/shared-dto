@@ -2,7 +2,7 @@
 
 namespace DTOCompiler\compilers\ts\properties;
 
-use DTOCompiler\compilers\ts\ImportService;
+use DTOCompiler\compilers\ts\ImportStringMaker;
 use Exception;
 
 class ObjectProperty extends AbstractProperty
@@ -16,7 +16,7 @@ class ObjectProperty extends AbstractProperty
             return '{}';
         }
 
-        if ($type = ImportService::getInstance()->createType($this->property->typeOf)) {
+        if ($type = ImportStringMaker::getInstance()->make($this->property->typeOf)) {
             return $type;
         }
         

@@ -3,58 +3,96 @@
 namespace DTOCompiler;
 
 use DTOCompiler\compilers\php\PHPCompiler;
-use DTOCompiler\compilers\ts\TypeScriptCompiler;
-use DTOCompiler\helpers\Console;
-use DTOCompiler\models\Description;
+use DTOCompiler\compilers\php\PHPHelper;
+use DTOCompiler\compilers\ts\TSCompiler;
+use DTOCompiler\compilers\ts\TSHelper;
+use DTOCompiler\models\DTOData;
+use DTOCompiler\models\DTODescription;
 use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
+use yii\helpers\BaseConsole;
+use yii\helpers\Console;
 
 class Compiler
 {
-    private string $srcFolder;
-    private string $subFolder;
+    private string $srcRootFolder;
+    private string $srcSubFolder;
+
+    private PHPCompiler $phpCompiler;
+    private TSCompiler $tsCompiler;
 
     public function __construct(string $subFolder = '')
     {
-        $this->subFolder = DIRECTORY_SEPARATOR . trim($subFolder, '\\/');
-        $this->srcFolder = realpath(__DIR__ . '/../source/');
+        $this->srcSubFolder = DIRECTORY_SEPARATOR . trim($subFolder, '\\/');
+        $this->srcRootFolder = CompilerHelper::getSrcRootFolder();
+        $this->phpCompiler = new PHPCompiler(PHPHelper::getDtoRootFolder());
+        $this->tsCompiler = new TSCompiler(TSHelper::getDtoRootFolder());
     }
 
     public function run(): void
     {
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->srcFolder . $this->subFolder, FilesystemIterator::SKIP_DOTS),
+            new RecursiveDirectoryIterator($this->srcRootFolder . $this->srcSubFolder, FilesystemIterator::SKIP_DOTS),
             RecursiveIteratorIterator::SELF_FIRST,
-            RecursiveIteratorIterator::CATCH_GET_CHILD
+            RecursiveIteratorIterator::CATCH_GET_CHILD,
         );
 
         /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
-            if (strtolower($file->getExtension()) === 'yaml') {
+            if ($this->isYaml($file)) {
                 try {
-                    $yaml = (array)Yaml::parseFile($file->getRealPath());
-                    $description = new Description($yaml);
-
-                    $description->folder = substr($file->getPath(), strlen($this->srcFolder) + 1);
-                    $description->filename = $file->getBasename('.yaml');
-
-                    Console::stdout('PHP: ' .  $file->getRealPath() . ' ... ');
-                    (new PHPCompiler($description))->render()->save();
-                    Console::success('Ok!');
-
-                    Console::stdout('TS: ' .  $file->getRealPath() . ' ... ');
-                    (new TypeScriptCompiler($description))->render()->save();
-                    Console::success('Ok!');
-                } catch (Exception $exception) {
-                    Console::error('Error: ' .  $exception->getMessage());
-                    Console::error('Error: ' .  $exception->getTraceAsString());
-                    return;
+                    $this->compile($file);
+                } catch (Exception $e) {
+                    Console::error($e->getFile() . ' #' . $e->getLine() . ': ' . $e->getMessage());
+                    break;
                 }
             }
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function compile(SplFileInfo $file): void
+    {
+        $parts = pathinfo($file->getRealPath());
+        $srcRelativePath = substr(
+            $parts['dirname'],
+            strlen($this->srcRootFolder),
+        );
+        $yaml = (array)Yaml::parseFile($file->getRealPath());
+
+        $dtoData = new DTOData();
+        $dtoData->name = $parts['filename'];
+        $dtoData->path = $srcRelativePath;
+        $dtoData->description = new DTODescription($yaml);
+
+        Console::stdout(
+            Console::ansiFormat(
+                $srcRelativePath . DIRECTORY_SEPARATOR . $dtoData->name,
+                [BaseConsole::FG_CYAN]
+            ) . PHP_EOL
+        );
+        Console::stdout('PHP: ... ');
+        $this->phpCompiler->run($dtoData);
+        $this->printSuccess();
+
+        Console::stdout('TS:  ... ');
+        $this->tsCompiler->run($dtoData);
+        $this->printSuccess();
+    }
+
+    private function isYaml(SplFileInfo $file): bool
+    {
+        return strtolower($file->getExtension()) === 'yaml';
+    }
+
+    private function printSuccess(): void
+    {
+        Console::stdout(Console::ansiFormat('Ok!', [BaseConsole::FG_GREEN]) . PHP_EOL);
     }
 }

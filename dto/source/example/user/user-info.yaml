@@ -1,0 +1,8 @@
+parent: output
+imports:
+  - example\user\user
+properties:
+  - name: team
+    type: object
+    typeOf: example\team
+    comment: Команда

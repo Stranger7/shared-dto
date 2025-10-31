@@ -16,9 +16,6 @@ abstract class AbstractDto
         }
     }
 
-    /**
-     * Fill DTO model properties
-     */
     public function populate(mixed $data): AbstractDto
     {
         $object = is_object($data) ? $data : (object)$data;
@@ -32,23 +29,6 @@ abstract class AbstractDto
         }
 
         return $this;
-    }
-
-    public function getUnspecifiedProperties(): array
-    {
-        return array_keys($this->unspecifiedProperties);
-    }
-
-    public function asUnderscoreArray($isNotNullOnly = false): array
-    {
-        $array = [];
-        foreach (array_keys($this->getProperties()) as $property) {
-            if (!$isNotNullOnly || !is_null($this->$property)) {
-                $array[Inflector::underscore($property)] = $this->$property;
-            }
-        }
-
-        return $array;
     }
 
     public function asArray(): array

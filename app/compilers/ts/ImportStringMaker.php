@@ -2,19 +2,19 @@
 
 namespace DTOCompiler\compilers\ts;
 
-use DTOCompiler\helpers\StringHelper;
 use Exception;
+use yii\helpers\Inflector;
 
-final class ImportService
+final class ImportStringMaker
 {
-    private static ?ImportService $instance = null;
+    private static ?ImportStringMaker $instance = null;
     private array $imports;
     private string $moduleFolder;
 
     /**
      * gets the instance via lazy initialization (created on first usage)
      */
-    public static function getInstance(): ImportService
+    public static function getInstance(): ImportStringMaker
     {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -45,7 +45,7 @@ final class ImportService
         $this->imports = [];
     }
 
-    public function createType(?string $import): ?string
+    public function make(?string $import): ?string
     {
         if (!$import || in_array($import, ['dto', 'input', 'success', 'debug', 'output', 'error'])) {
             return null;
@@ -56,7 +56,7 @@ final class ImportService
         }
 
         $pieces = explode('\\', $import);
-        $type = StringHelper::camelize(array_pop($pieces));
+        $type = Inflector::camelize(array_pop($pieces));
         $i = 0;
         while (isset($this->imports[$type])) {
             $type .= ++$i;

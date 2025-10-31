@@ -2,17 +2,17 @@
 
 namespace DTOCompiler\compilers\php\properties;
 
-use DTOCompiler\helpers\StringHelper;
-use DTOCompiler\models\Descriptor;
+use DTOCompiler\models\PropertyDescriptor;
+use yii\helpers\Inflector;
 
 abstract class AbstractProperty
 {
     public const string INDENT = '    ';
 
-    protected Descriptor $property;
+    protected PropertyDescriptor $property;
     protected array $imports = [];
 
-    public function __construct(Descriptor $property)
+    public function __construct(PropertyDescriptor $property, protected bool $required = false)
     {
         $this->property = $property;
     }
@@ -24,11 +24,11 @@ abstract class AbstractProperty
         $code .= $this->renderAttributes();
 
         $code .= self::INDENT . 'public '
-            . ($this->property->required ? '' : '?')
-            . $this->renderType() . ' $' . StringHelper::variablize($this->property->name)
+            . ($this->required ? '' : '?')
+            . $this->renderType() . ' $' . Inflector::variablize($this->property->name)
             . (!is_null($this->property->default)
                 ? ' = ' . $this->renderDefault()
-                : ($this->property->required ? '' : ' = null'))
+                : ($this->required ? '' : ' = null'))
             . ';';
 
         return $code;
@@ -56,8 +56,11 @@ abstract class AbstractProperty
 
     protected function renderRuleRequired(): string
     {
-        if ($this->property->required) {
-            $this->imports[] = 'use Yiisoft\Validator\Rule\Required;';
+        $import = 'use Yiisoft\Validator\Rule\Required;';
+        if ($this->required) {
+            if (!in_array($import, $this->imports)) {
+                $this->imports[] = $import;
+            }
             return self::INDENT . '#[Required]' . PHP_EOL;
         }
 

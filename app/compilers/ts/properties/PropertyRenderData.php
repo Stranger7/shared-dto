@@ -1,6 +1,6 @@
 <?php
 
-namespace DTOCompiler\models;
+namespace DTOCompiler\compilers\ts\properties;
 
 use dto\AbstractDto;
 

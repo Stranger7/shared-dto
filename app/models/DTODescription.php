@@ -3,25 +3,22 @@
 namespace DTOCompiler\models;
 
 use dto\AbstractDto;
+use DTOCompiler\CompilerHelper;
 use Exception;
 use Symfony\Component\Yaml\Yaml;
 
-class Description extends AbstractDto
+class DTODescription extends AbstractDto
 {
-    public string $folder;
-    public string $filename;
-    public ?string $parent = null;
+    public string $description = '';
+
+    public string $parent = '';
+
+    public array $required = [];
+
     public array $imports = [];
 
-    /** @var Descriptor[] */
+    /** @var PropertyDescriptor[] */
     public array $properties = [];
-
-    public function setTypeOf(?string $parent = null): void
-    {
-        if ($parent !== null) {
-            $this->parent = str_replace('/', '\\', $parent);
-        }
-    }
 
     public function setProperties(array $properties): void
     {
@@ -29,7 +26,7 @@ class Description extends AbstractDto
             $this->properties,
             array_map(
                 function ($property) {
-                    return new Descriptor($property);
+                    return new PropertyDescriptor($property);
                 },
                 $properties
             )
@@ -43,9 +40,8 @@ class Description extends AbstractDto
     {
         $this->imports = $imports;
         foreach ($this->imports as $import) {
-            $import = trim(str_replace('\\', '/', $import), '/');
-            $yaml = (array)Yaml::parseFile(realpath(__DIR__ . '/../../source/' . $import . '.yaml'));
-            $description = new Description($yaml);
+            $yaml = (array)Yaml::parseFile(CompilerHelper::getFilenameFromImport($import));
+            $description = new DTODescription($yaml);
             if ($description->parent !== 'dto') {
                 throw new Exception('The imported yaml must be a child of "dto"');
             }

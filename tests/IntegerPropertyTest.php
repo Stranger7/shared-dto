@@ -3,7 +3,7 @@
 namespace DTOCompiler\tests;
 
 use DTOCompiler\compilers\php\properties\IntProperty;
-use DTOCompiler\models\Descriptor;
+use DTOCompiler\models\PropertyDescriptor;
 use PHPUnit\Framework\TestCase;
 
 class IntegerPropertyTest extends TestCase
@@ -11,7 +11,7 @@ class IntegerPropertyTest extends TestCase
     public function testCodeCompile(): void
     {
         $definition = (new IntProperty(
-            new Descriptor([
+            new PropertyDescriptor([
                 'name' => 'orgId',
                 'type' => 'integer',
                 'default' => 1,

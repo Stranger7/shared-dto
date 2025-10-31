@@ -2,17 +2,18 @@
 
 namespace DTOCompiler\compilers\php\properties;
 
-use DTOCompiler\helpers\StringHelper;
-use DTOCompiler\models\Descriptor;
+use DTOCompiler\compilers\php\PHPHelper;
+use DTOCompiler\models\PropertyDescriptor;
+use yii\helpers\Inflector;
 
 class ObjectProperty extends AbstractProperty
 {
     private string $type;
 
-    public function __construct(Descriptor $property)
+    public function __construct(PropertyDescriptor $property)
     {
         parent::__construct($property);
-        $this->type = StringHelper::asFullClassName($this->property->typeOf ?? '');
+        $this->type = PHPHelper::makeFullClassName($this->property->typeOf ?? '');
     }
 
     protected function renderType(): string
@@ -36,7 +37,7 @@ class ObjectProperty extends AbstractProperty
             '{%type%}',
             '{%name%}'
         ], [
-            StringHelper::camelize($this->property->name),
+            Inflector::camelize($this->property->name),
             $this->type,
             $this->property->name
         ], $template);

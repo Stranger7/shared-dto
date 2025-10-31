@@ -11,6 +11,6 @@ class JsonProperty extends AbstractProperty
 
     protected function renderDefault(): string
     {
-        return $this->property->default;
+        return '[' . implode(',', $this->property->default) . ']';
     }
 }

@@ -1,0 +1,7 @@
+parent: input
+imports:
+  - example\user\user
+required:
+  - firstName
+  - lastName
+  - email

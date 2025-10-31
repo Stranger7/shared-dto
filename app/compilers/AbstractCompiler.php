@@ -2,41 +2,38 @@
 
 namespace DTOCompiler\compilers;
 
-use DTOCompiler\models\Description;
+use DTOCompiler\models\DTOData;
 
 abstract class AbstractCompiler implements CompilerInterface
 {
-    protected Description $description;
-    protected string $code = '';
+    protected string $dtoCode = '';
 
-    protected string $dstFolder;
-
-    abstract protected function getDtoFilename(): string;
-
-    abstract protected function renderHeader(): string;
-
-    abstract protected function renderProperties(): array;
-
-    abstract protected function setDtoFolder(): void;
-
-    public function __construct(Description $description)
+    public function __construct(protected string $dtoRootFolder)
     {
-        $this->description = $description;
-        $this->setDtoFolder();
+        $this->dtoRootFolder = rtrim($this->dtoRootFolder, '\\/') . DIRECTORY_SEPARATOR;
     }
 
-    public function save(): void
+    public function run(DTOData $data): void
     {
-        $dtoFilename = $this->getDtoFilename();
-        $this->ensureFolder(pathinfo($dtoFilename)['dirname']);
-        file_put_contents($dtoFilename, $this->code);
+        $this->render($data);
+        $this->save($this->makeDTOFilename($data));
+    }
+
+    abstract protected function render(DTOData $data): void;
+
+    abstract protected function makeDTOFilename(DTOData $data): string;
+
+    protected function save(string $filename): void
+    {
+        $this->ensureFolder(pathinfo($filename)['dirname']);
+        file_put_contents($filename, $this->dtoCode);
     }
 
     private function ensureFolder(string $folder): void
     {
         $path = '';
-        foreach (explode('/', $folder) as $segment) {
-            $path .= '/' . $segment;
+        foreach (explode(DIRECTORY_SEPARATOR, $folder) as $segment) {
+            $path .= DIRECTORY_SEPARATOR . $segment;
             if (!is_dir($path)) {
                 mkdir($path);
             }
